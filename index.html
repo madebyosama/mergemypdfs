@@ -159,30 +159,21 @@
       }
 
       .panel {
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        box-shadow: var(--shadow);
-        overflow: hidden;
-        width: 340px;
+        width: 420px;
         max-width: calc(100vw - 32px);
       }
 
       /* ---------- drop zone ---------- */
       .drop {
-        margin: 12px;
-        padding: 34px 20px;
-        text-align: center;
-        border: 1px dashed var(--border-strong);
-        border-radius: var(--radius-sm);
-        background: var(--subtle);
-        transition:
-          border-color 0.15s ease,
-          background-color 0.15s ease;
-        cursor: pointer;
+        padding: 16px;
+        border: 2px dashed var(--border-strong);
+        border-radius: var(--radius);
+        background: var(--bg);
+        transition: border-color 0.15s ease;
         position: relative;
       }
-      .drop:hover,
+      .drop:not(.filled):hover,
+      .drop:not(.filled):focus-within,
       .drop.over {
         border-color: var(--faint);
       }
@@ -190,22 +181,10 @@
         content: "";
         position: absolute;
         inset: 0;
-        border-radius: var(--radius-sm);
+        border-radius: var(--radius);
         background: var(--text);
         opacity: 0.06;
-      }
-      .drop.compact {
-        padding: 18px 20px;
-      }
-      .drop h2 {
-        font-size: 15px;
-        font-weight: 600;
-        margin: 0 0 4px;
-      }
-      .drop p {
-        margin: 0;
-        color: var(--muted);
-        font-size: 13px;
+        pointer-events: none;
       }
       .drop input[type="file"] {
         position: absolute;
@@ -213,8 +192,79 @@
         height: 1px;
         opacity: 0;
       }
-      .drop:focus-within {
-        border-color: var(--faint);
+
+      /* done state */
+      .dropDone[hidden] {
+        display: none;
+      }
+      .dropDone {
+        padding: 46px 20px;
+        text-align: center;
+        font-size: 15px;
+        color: var(--muted);
+      }
+      .dropDone a {
+        color: var(--text);
+        font-weight: 500;
+        text-underline-offset: 3px;
+      }
+
+      /* empty state */
+      .dropEmpty[hidden] {
+        display: none;
+      }
+      .dropEmpty {
+        display: block;
+        width: 100%;
+        padding: 46px 20px;
+        text-align: center;
+        border: 0;
+        background: none;
+        color: var(--muted);
+        font-family: inherit;
+        font-size: 15px;
+        cursor: pointer;
+      }
+      .dropEmpty svg {
+        width: 26px;
+        height: 26px;
+        display: block;
+        margin: 0 auto 14px;
+      }
+      .dropEmpty b {
+        color: var(--text);
+        font-weight: 700;
+      }
+      .dropEmpty:hover b {
+        text-decoration: underline;
+      }
+
+      /* filled state */
+      .dropHead {
+        margin: 6px 0 14px;
+        text-align: center;
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text);
+      }
+      .addMore[hidden] {
+        display: none;
+      }
+      .addMore {
+        display: block;
+        width: 100%;
+        margin: 14px 0 6px;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: var(--muted);
+        font-family: inherit;
+        font-size: 14px;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+      .addMore:hover {
+        color: var(--text);
       }
 
       /* ---------- list ---------- */
@@ -226,23 +276,38 @@
       .row {
         display: flex;
         align-items: center;
-        gap: 12px;
-        padding: 11px 14px 11px 8px;
-        border-bottom: 1px solid var(--border);
+        gap: 10px;
+        padding: 11px 12px 11px 7px;
+        margin-bottom: 8px;
+        border-radius: var(--radius-sm);
         background: var(--surface);
         transition: background 0.12s;
+        position: relative;
       }
       .row:last-child {
-        border-bottom: 0;
+        margin-bottom: 0;
       }
       .row.dragging {
         opacity: 0.35;
       }
-      .row.drop-target {
-        box-shadow: inset 0 2px 0 var(--solid);
+      .row.drop-target::before,
+      .row.drop-target-after::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 2px;
+        border-radius: 1px;
+        background: var(--solid);
       }
-      .row.drop-target-after {
-        box-shadow: inset 0 -2px 0 var(--solid);
+      .row.drop-target::before {
+        top: -5px;
+      }
+      .row.drop-target-after::after {
+        bottom: -5px;
+      }
+      .row:last-child.drop-target-after::after {
+        bottom: -4px;
       }
       .row.bad {
         box-shadow: inset 3px 0 0 var(--danger);
@@ -266,7 +331,7 @@
       }
       .grip:hover {
         color: var(--text);
-        background: var(--subtle);
+        background: var(--bg);
       }
       .grip svg {
         width: 11px;
@@ -278,14 +343,14 @@
         min-width: 0;
       }
       .name {
-        font-size: 13.5px;
+        font-size: 14.5px;
         font-weight: 500;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
       .sub {
-        font-size: 12px;
+        font-size: 12.5px;
         color: var(--muted);
         font-family: var(--mono);
         margin-top: 1px;
@@ -312,7 +377,7 @@
         font-size: 13px;
       }
       .iconbtn:hover {
-        background: var(--subtle);
+        background: var(--bg);
         color: var(--text);
       }
       .iconbtn svg {
@@ -322,13 +387,18 @@
       }
 
       /* ---------- footer bar ---------- */
+      .bar[hidden] {
+        display: none;
+      }
       .bar {
         display: flex;
         flex-direction: column;
-        gap: 10px;
-        padding: 14px;
-        border-top: 1px solid var(--border);
-        background: var(--subtle);
+        align-items: center;
+        gap: 12px;
+        padding: 22px 0 0;
+      }
+      .barTop[hidden] {
+        display: none;
       }
       .barTop {
         display: flex;
@@ -336,7 +406,6 @@
         gap: 10px;
       }
       .tally {
-        flex: 1;
         min-width: 0;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -350,7 +419,7 @@
         cursor: pointer;
       }
       .btn {
-        padding: 9px 16px;
+        padding: 7px 12px;
         border-radius: var(--radius-sm);
         border: 1px solid var(--border-strong);
         background: var(--subtle);
@@ -366,11 +435,29 @@
         color: var(--solid-text);
         border-color: var(--solid);
         font-weight: 700;
-        width: 100%;
+        font-size: 15px;
+        padding: 14px 38px;
+        border-radius: 999px;
       }
       .btn-primary:hover:not(:disabled) {
         background: var(--solid-hover);
         border-color: var(--solid-hover);
+      }
+      .btn-reset[hidden] {
+        display: none;
+      }
+      .btn-reset {
+        background: var(--surface);
+        border-color: var(--surface);
+        color: var(--text);
+        font-weight: 700;
+        font-size: 15px;
+        padding: 14px 38px;
+        border-radius: 999px;
+      }
+      .btn-reset:hover:not(:disabled) {
+        background: var(--border);
+        border-color: var(--border);
       }
       .btn:disabled {
         opacity: 0.42;
@@ -389,18 +476,10 @@
         border-color: transparent;
       }
 
-      .empty {
-        padding: 28px 22px;
-        text-align: center;
-        color: var(--faint);
-        font-size: 13px;
-      }
-
       .status {
         width: 100%;
-        margin-top: 0;
-        padding: 12px 14px;
-        border-top: 1px solid var(--border);
+        margin: 0;
+        padding: 12px 14px 0;
         text-align: center;
         font-size: 12.5px;
         color: var(--faint);
@@ -433,29 +512,47 @@
 
     <div class="wrap">
       <main class="panel">
-        <div
-          class="drop"
-          id="drop"
-          tabindex="0"
-          role="button"
-          aria-label="Add PDF files"
-        >
-          <h2 id="dropTitle">Drop PDFs here</h2>
-          <p id="dropSub">or click to choose files</p>
+        <div class="drop" id="drop">
+          <button class="dropEmpty" id="dropEmpty" type="button">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path
+                d="M12 16V4M12 4 7.5 8.5M12 4l4.5 4.5M4 16v2.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V16"
+              />
+            </svg>
+            <b>Select files</b> or drag and drop
+          </button>
+
+          <div id="dropFilled" hidden>
+            <h2 class="dropHead">Drag to order your files</h2>
+            <ul class="list" id="list" aria-label="Files to merge"></ul>
+            <button class="addMore" id="addMore" type="button">
+              Add more files
+            </button>
+          </div>
+
+          <div class="dropDone" id="dropDone" hidden>
+            Click <a href="#" id="dlLink" download>here</a> to download your PDF
+          </div>
+
           <input type="file" id="file" accept="application/pdf,.pdf" multiple />
         </div>
 
-        <ul class="list" id="list" aria-label="Files to merge"></ul>
-        <p class="empty" id="empty">No files yet.</p>
-
-        <div class="bar">
-          <div class="barTop">
-            <span class="tally" id="tally">0 files · 0 pages</span>
-            <button class="btn" id="clearBtn" disabled>Clear</button>
-          </div>
+        <div class="bar" id="bar" hidden>
           <button class="btn btn-primary" id="mergeBtn" disabled>
-            Merge &amp; download
+            Merge PDFs
           </button>
+          <button class="btn btn-reset" id="resetBtn" hidden>Reset</button>
+          <div class="barTop" id="barTop">
+            <span class="tally" id="tally">0 files · 0 pages</span>
+          </div>
         </div>
 
         <p class="status" id="status" role="status" aria-live="polite"></p>
@@ -24714,17 +24811,22 @@
         var drop = $("drop"),
           fileInput = $("file"),
           list = $("list"),
-          empty = $("empty"),
           tally = $("tally"),
+          barTop = $("barTop"),
           mergeBtn = $("mergeBtn"),
-          clearBtn = $("clearBtn"),
           status = $("status"),
-          dropTitle = $("dropTitle"),
-          dropSub = $("dropSub"),
+          dropEmpty = $("dropEmpty"),
+          dropFilled = $("dropFilled"),
+          addMore = $("addMore"),
+          bar = $("bar"),
+          dropDone = $("dropDone"),
+          dlLink = $("dlLink"),
+          resetBtn = $("resetBtn"),
           themeSwitch = $("themeSwitch"),
           themeIcon = $("themeIcon");
 
         var items = []; // { id, name, size, rec }
+        var done = null; // { url, name } once a merge has finished
         var nextId = 1;
         var statusTimer = null;
         var busy = false;
@@ -24818,14 +24920,15 @@
             (t.pages === 1 ? " page" : " pages") +
             (t.bad ? "  ·  " + t.bad + " skipped" : "");
           mergeBtn.disabled = busy || t.pages === 0;
-          clearBtn.disabled = busy || items.length === 0;
-          empty.hidden = items.length > 0;
           var many = items.length > 0;
-          drop.classList.toggle("compact", many);
-          dropTitle.textContent = many ? "Add more PDFs" : "Drop PDFs here";
-          dropSub.textContent = many
-            ? "drop or click"
-            : "or click to choose files";
+          dropEmpty.hidden = many || !!done;
+          dropFilled.hidden = !many || !!done;
+          dropDone.hidden = !done;
+          drop.classList.toggle("filled", many || !!done);
+          bar.hidden = !many && !done;
+          mergeBtn.hidden = !!done;
+          barTop.hidden = !!done;
+          resetBtn.hidden = !done;
         }
 
         var ICONS = {
@@ -24986,6 +25089,12 @@
             );
           if (!incoming.length) return;
 
+          if (done) {
+            URL.revokeObjectURL(done.url);
+            done = null;
+            items = [];
+          }
+
           var pending = incoming.map(function (f) {
             var it = {
               id: nextId++,
@@ -25053,15 +25162,17 @@
             var bytes = await MergeCore.merge(plan, sources, {});
             var blob = new Blob([bytes], { type: "application/pdf" });
             var url = URL.createObjectURL(blob);
+            var name = outName();
             var a = document.createElement("a");
             a.href = url;
-            a.download = outName();
+            a.download = name;
             document.body.appendChild(a);
             a.click();
             a.remove();
-            setTimeout(function () {
-              URL.revokeObjectURL(url);
-            }, 1500);
+            // keep the URL alive so the "here" link can re-download it
+            done = { url: url, name: name };
+            dlLink.href = url;
+            dlLink.download = name;
             say(plan.length + " pages · " + fmtSize(blob.size), "ok");
           } catch (e) {
             say(e.message || "Merge failed", "err");
@@ -25090,23 +25201,27 @@
           );
         }
 
-        clearBtn.addEventListener("click", function () {
+        function clearAll() {
+          if (done) {
+            URL.revokeObjectURL(done.url);
+            done = null;
+          }
           items = [];
           render();
           refreshBar();
-          say("Cleared");
+        }
+
+        resetBtn.addEventListener("click", function () {
+          clearAll();
+          say("");
         });
 
         /* ---------- drop zone wiring ---------- */
-        drop.addEventListener("click", function () {
+        function pick() {
           fileInput.click();
-        });
-        drop.addEventListener("keydown", function (e) {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            fileInput.click();
-          }
-        });
+        }
+        dropEmpty.addEventListener("click", pick);
+        addMore.addEventListener("click", pick);
         fileInput.addEventListener("change", function () {
           addFiles(fileInput.files);
           fileInput.value = "";
